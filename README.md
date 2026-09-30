@@ -11,7 +11,13 @@
 **Sistem ERP (Enterprise Resource Planning) lengkap untuk manajemen operasional penggilingan padi.**  
 Dibangun dengan Go (Gin) di sisi backend dan React + TypeScript di sisi frontend.
 
-[Demo](#) · [Dokumentasi API](#api-endpoints) · [Panduan Instalasi](#-instalasi)
+[Dokumentasi API](#api-endpoints) · [Panduan Instalasi](#-instalasi)
+
+<br/>
+
+![Tampilan Dashboard](assets/dashboard.png)
+
+*(Tampilan UI Aplikasi - Dashboard)*
 
 </div>
 
@@ -22,6 +28,15 @@ Dibangun dengan Go (Gin) di sisi backend dan React + TypeScript di sisi frontend
 **ERP PD Putra Pribumi** adalah sistem manajemen operasional terintegrasi yang dirancang khusus untuk industri penggilingan padi. Sistem ini mencakup seluruh alur bisnis dari pembelian gabah, proses produksi, penjualan hasil giling, manajemen jasa giling, hingga pelaporan keuangan.
 
 Proyek ini dibangun sebagai solusi nyata untuk menggantikan pencatatan manual yang rentan terhadap kesalahan, dan memberikan visibilitas penuh terhadap operasional bisnis secara real-time.
+
+---
+
+## 🔑 Demo & Hak Akses
+Jika sistem ini sudah di-deploy secara publik, Anda dapat menguji fitur aplikasi (dengan hak akses terbatas/penuh) menggunakan kredensial berikut:
+
+- **Username:** `admin`
+- **Password:** `admin123`
+- **Role:** OWNER (Full Access)
 
 ---
 
@@ -105,250 +120,3 @@ Proyek ini dibangun sebagai solusi nyata untuk menggantikan pencatatan manual ya
 ---
 
 ## 🏗️ Arsitektur Sistem
-
-```
-erp-pd-putra-pribumi/
-├── backend/                    # Go REST API
-│   ├── cmd/
-│   │   └── main.go             # Entry point & route registration
-│   └── internal/
-│       ├── handler/            # HTTP request handlers (controllers)
-│       ├── service/            # Business logic layer
-│       ├── repository/         # Data access layer
-│       ├── model/              # Database models & structs
-│       ├── middleware/         # JWT auth & role middleware
-│       └── helper/             # Utility functions
-│
-└── frontend/                   # React + TypeScript SPA
-    └── src/
-        ├── pages/              # 18 halaman utama aplikasi
-        ├── components/         # Reusable UI components
-        ├── contexts/           # React Context (Auth, Permission)
-        ├── services/           # API client (axios wrapper)
-        └── types.ts            # TypeScript type definitions
-```
-
-### Alur Arsitektur Backend
-
-```
-HTTP Request
-    ↓
-Middleware (JWT Auth + Role Check)
-    ↓
-Handler (Input Validation)
-    ↓
-Service (Business Logic + Transaction)
-    ↓
-Repository (GORM Query)
-    ↓
-MySQL Database
-```
-
----
-
-## 🚀 Instalasi
-
-### Prasyarat
-- **Go** 1.21+
-- **Node.js** 18+ & npm
-- **MySQL** 8.0+
-- **Git**
-
-### 1. Clone Repository
-
-```bash
-git clone https://github.com/restuhaerul/erp-pd-putra-pribumi.git
-cd erp-pd-putra-pribumi
-```
-
-### 2. Setup Backend
-
-```bash
-cd backend
-
-# Buat file environment
-cp .env.example .env
-```
-
-Edit file `.env` sesuai konfigurasi lokal:
-
-```env
-DB_USER=root
-DB_PASSWORD=your_password
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_NAME=putrapribumi
-JWT_SECRET=your_secret_key_here
-```
-
-```bash
-# Install dependencies
-go mod download
-
-# Buat database
-mysql -u root -p -e "CREATE DATABASE putrapribumi CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-
-# Jalankan server (auto-migrate schema)
-go run cmd/main.go
-```
-
-Server berjalan di: `http://localhost:8081`
-
-### 3. Setup Frontend
-
-```bash
-cd ../frontend
-
-# Buat file environment
-cp .env.example .env
-```
-
-Edit file `.env`:
-
-```env
-REACT_APP_API_URL=http://localhost:8081
-```
-
-```bash
-# Install dependencies
-npm install
-
-# Jalankan development server
-npm start
-```
-
-Aplikasi berjalan di: `http://localhost:3000`
-
-### 4. Akun Default
-
-Setelah pertama kali run, buat akun OWNER melalui endpoint:
-```
-POST /api/register
-```
-Atau gunakan halaman `/register` (hanya bisa diakses oleh OWNER yang sudah login).
-
----
-
-## 🌐 Deploy
-
-### Frontend (Vercel)
-
-1. Import repo ke [Vercel](https://vercel.com)
-2. Set konfigurasi:
-   - **Root Directory**: `frontend`
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `build`
-3. Tambahkan Environment Variable:
-   ```
-   REACT_APP_API_URL=https://your-backend-url.com
-   ```
-
-### Backend (Railway / Render / VPS)
-
-1. Set environment variables di platform deploy:
-   ```
-   DB_USER=...
-   DB_PASSWORD=...
-   DB_HOST=...
-   DB_PORT=3306
-   DB_NAME=putrapribumi
-   JWT_SECRET=...
-   ```
-2. Build command: `go build -o main ./cmd/main.go`
-3. Start command: `./main`
-
----
-
-## 📡 API Endpoints
-
-### Auth
-| Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| POST | `/api/login` | Login dan dapatkan JWT token |
-| GET | `/api/me` | Info user yang sedang login |
-| POST | `/api/register` | Registrasi user baru (OWNER only) |
-
-### Pembelian Gabah
-| Method | Endpoint | Role |
-|--------|----------|------|
-| GET | `/api/pembelian` | OWNER, ADMIN, GUDANG |
-| POST | `/api/pembelian` | OWNER, ADMIN, GUDANG |
-| PUT | `/api/pembelian/:id` | OWNER, ADMIN, GUDANG |
-| DELETE | `/api/pembelian/:id` | OWNER only |
-
-### Produksi
-| Method | Endpoint | Role |
-|--------|----------|------|
-| GET | `/api/produksi` | OWNER, ADMIN, GUDANG |
-| POST | `/api/produksi` | OWNER, ADMIN, GUDANG |
-| PUT | `/api/produksi/:id` | OWNER only |
-| DELETE | `/api/produksi/:id` | OWNER only |
-
-### Penjualan
-| Method | Endpoint | Role |
-|--------|----------|------|
-| GET | `/api/penjualan` | OWNER, ADMIN, KASIR |
-| POST | `/api/penjualan` | OWNER, ADMIN, KASIR |
-| DELETE | `/api/penjualan/:id` | OWNER, ADMIN |
-
-> Lihat semua endpoint di `backend/cmd/main.go`
-
----
-
-## 📸 Halaman Aplikasi
-
-| Halaman | Deskripsi |
-|---------|-----------|
-| **Dashboard** | Ringkasan statistik, grafik penjualan & produksi |
-| **Pembelian Gabah** | Manajemen pembelian gabah + tracking batch |
-| **Pembelian Beras** | Trading beras langsung dari pemasok |
-| **Produksi** | Batch produksi + kalkulasi HPP otomatis |
-| **Penjualan** | Pencatatan penjualan + manajemen piutang |
-| **Jasa Giling** | Layanan giling untuk pelanggan eksternal |
-| **Stok Produk** | Inventaris semua produk + riwayat aktivitas |
-| **Karung** | Manajemen stok & pembelian karung |
-| **Kas** | Riwayat transaksi masuk/keluar per akun |
-| **Akun Kas** | Manajemen rekening & akun kas |
-| **Hutang & Piutang** | Tracking tagihan masuk dan keluar |
-| **Biaya Operasional** | Pencatatan pengeluaran operasional |
-| **Laporan** | Laporan keuangan periode |
-| **Activity Logs** | Audit trail semua aktivitas user |
-
----
-
-## 🔑 Logika Bisnis Utama
-
-### FIFO Inventory
-Sistem menggunakan algoritma **First In, First Out** untuk pengambilan stok dari batch produksi dan pembelian. Ini memastikan stok terlama digunakan terlebih dahulu, sesuai standar akuntansi.
-
-### HPP Otomatis
-Harga Pokok Produksi dikalkulasi otomatis berdasarkan:
-- Total biaya pembelian bahan baku per batch
-- Biaya operasional yang dialokasikan
-- Jumlah output produksi (Kg)
-
-### Multi-Sumber Bahan Baku
-Satu batch produksi dapat menggunakan bahan baku dari beberapa sumber sekaligus:
-- Stok gabah dari pembelian
-- Stok produk sampingan
-- Stok karung
-
----
-
-## 🤝 Kontribusi
-
-Proyek ini bersifat portfolio. Saran dan feedback sangat diterima melalui [Issues](https://github.com/restuhaerul/erp-pd-putra-pribumi/issues).
-
----
-
-## 📄 Lisensi
-
-MIT License — lihat file [LICENSE](LICENSE) untuk detail.
-
----
-
-<div align="center">
-
-**Dibuat dengan ❤️ oleh [Restu Haerul Zamzam](https://github.com/restuhaerul)**
-
-</div>
