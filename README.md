@@ -120,3 +120,74 @@ Jika sistem ini sudah di-deploy secara publik, Anda dapat menguji fitur aplikasi
 ---
 
 ## 🏗️ Arsitektur Sistem
+
+```text
+erp-pd-putra-pribumi/
+├── backend/                    # Go REST API
+│   ├── cmd/
+│   │   └── main.go             # Entry point & route registration
+│   └── internal/
+│       ├── handler/            # HTTP request handlers (controllers)
+│       ├── service/            # Business logic layer
+│       ├── repository/         # Data access layer
+│       ├── model/              # Database models & structs
+│       ├── middleware/         # JWT auth & role middleware
+│       └── helper/             # Utility functions
+│
+└── frontend/                   # React + TypeScript SPA
+    └── src/
+        ├── pages/              # 18 halaman utama aplikasi
+        ├── components/         # Reusable UI components
+        ├── contexts/           # React Context (Auth, Permission)
+        ├── services/           # API client (axios wrapper)
+        └── types.ts            # TypeScript type definitions
+Alur Arsitektur BackendPlaintextHTTP Request
+    ↓
+Middleware (JWT Auth + Role Check)
+    ↓
+Handler (Input Validation)
+    ↓
+Service (Business Logic + Transaction)
+    ↓
+Repository (GORM Query)
+    ↓
+MySQL Database
+🚀 InstalasiPrasyaratGo 1.21+Node.js 18+ & npmMySQL 8.0+Git1. Clone RepositoryBashgit clone [https://github.com/restuhaerul/erp-pd-putra-pribumi.git](https://github.com/restuhaerul/erp-pd-putra-pribumi.git)
+cd erp-pd-putra-pribumi
+2. Setup BackendBashcd backend
+
+# Buat file environment
+cp .env.example .env
+Edit file .env sesuai konfigurasi lokal:Code snippetDB_USER=root
+DB_PASSWORD=your_password
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_NAME=putrapribumi
+JWT_SECRET=your_secret_key_here
+Bash# Install dependencies
+go mod download
+
+# Buat database
+mysql -u root -p -e "CREATE DATABASE putrapribumi CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+# Jalankan server (auto-migrate schema)
+go run cmd/main.go
+Server berjalan di: http://localhost:80813. Setup FrontendBashcd ../frontend
+
+# Buat file environment
+cp .env.example .env
+Edit file .env:Code snippetREACT_APP_API_URL=http://localhost:8081
+Bash# Install dependencies
+npm install
+
+# Jalankan development server
+npm start
+Aplikasi berjalan di: http://localhost:30004. Akun DefaultSetelah pertama kali run, buat akun OWNER melalui endpoint:PlaintextPOST /api/register
+Atau gunakan halaman /register (hanya bisa diakses oleh OWNER yang sudah login).🌐 DeployFrontend (Vercel)Import repo ke VercelSet konfigurasi:Root Directory: frontendBuild Command: npm run buildOutput Directory: buildTambahkan Environment Variable:Code snippetREACT_APP_API_URL=[https://your-backend-url.com](https://your-backend-url.com)
+Backend (Railway / Render / VPS)Set environment variables di platform deploy:Code snippetDB_USER=...
+DB_PASSWORD=...
+DB_HOST=...
+DB_PORT=3306
+DB_NAME=putrapribumi
+JWT_SECRET=...
+Build command: go build -o main ./cmd/main.goStart command: ./main📡 API EndpointsAuthMethodEndpointDeskripsiPOST/api/loginLogin dan dapatkan JWT tokenGET/api/meInfo user yang sedang loginPOST/api/registerRegistrasi user baru (OWNER only)Pembelian GabahMethodEndpointRoleGET/api/pembelianOWNER, ADMIN, GUDANGPOST/api/pembelianOWNER, ADMIN, GUDANGPUT/api/pembelian/:idOWNER, ADMIN, GUDANGDELETE/api/pembelian/:idOWNER onlyProduksiMethodEndpointRoleGET/api/produksiOWNER, ADMIN, GUDANGPOST/api/produksiOWNER, ADMIN, GUDANGPUT/api/produksi/:idOWNER onlyDELETE/api/produksi/:idOWNER onlyPenjualanMethodEndpointRoleGET/api/penjualanOWNER, ADMIN, KASIRPOST/api/penjualanOWNER, ADMIN, KASIRDELETE/api/penjualan/:idOWNER, ADMINLihat semua endpoint di backend/cmd/main.go📸 Halaman AplikasiHalamanDeskripsiDashboardRingkasan statistik, grafik penjualan & produksiPembelian GabahManajemen pembelian gabah + tracking batchPembelian BerasTrading beras langsung dari pemasokProduksiBatch produksi + kalkulasi HPP otomatisPenjualanPencatatan penjualan + manajemen piutangJasa GilingLayanan giling untuk pelanggan eksternalStok ProdukInventaris semua produk + riwayat aktivitasKarungManajemen stok & pembelian karungKasRiwayat transaksi masuk/keluar per akunAkun KasManajemen rekening & akun kasHutang & PiutangTracking tagihan masuk dan keluarBiaya OperasionalPencatatan pengeluaran operasionalLaporanLaporan keuangan periodeActivity LogsAudit trail semua aktivitas user🔑 Logika Bisnis UtamaFIFO InventorySistem menggunakan algoritma First In, First Out untuk pengambilan stok dari batch produksi dan pembelian. Ini memastikan stok terlama digunakan terlebih dahulu, sesuai standar akuntansi.HPP OtomatisHarga Pokok Produksi dikalkulasi otomatis berdasarkan:Total biaya pembelian bahan baku per batchBiaya operasional yang dialokasikanJumlah output produksi (Kg)Multi-Sumber Bahan BakuSatu batch produksi dapat menggunakan bahan baku dari beberapa sumber sekaligus:Stok gabah dari pembelianStok produk sampinganStok karung🤝 KontribusiProyek ini bersifat portfolio. Saran dan feedback sangat diterima melalui Issues.📄 LisensiMIT License — lihat file LICENSE untuk detail.Dibuat dengan ❤️ oleh Restu Haerul Zamzam
