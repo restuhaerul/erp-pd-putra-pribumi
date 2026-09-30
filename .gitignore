@@ -1,0 +1,63 @@
+# ========================
+# Dependencies
+# ========================
+node_modules/
+frontend/node_modules/
+
+# ========================
+# Build Output
+# ========================
+frontend/build/
+frontend/.cache/
+backend/bin/
+*.exe
+
+# ========================
+# Environment Variables
+# ========================
+.env
+.env.local
+.env.production
+.env.development.local
+.env.test.local
+.env.production.local
+backend/.env
+frontend/.env
+
+# ========================
+# Uploads / User Data
+# ========================
+backend/uploads/
+uploads/
+
+# ========================
+# Go
+# ========================
+*.test
+vendor/
+
+# ========================
+# Logs
+# ========================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ========================
+# OS / IDE
+# ========================
+.DS_Store
+.idea/
+*.swp
+*.swo
+Thumbs.db
+
+# ========================
+# Backup files
+# ========================
+*.backup
+*.bak
+*.zip
+package-lock.json.backup
+package.json.backup
