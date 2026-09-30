@@ -19,6 +19,10 @@ Dibangun dengan Go (Gin) di sisi backend dan React + TypeScript di sisi frontend
 
 *Tampilan UI Aplikasi - Dashboard*
 
+![Halaman Login](assets/login.png)
+
+*Tampilan UI Aplikasi - Login*
+
 </div>
 
 ---
